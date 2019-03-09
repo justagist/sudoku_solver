@@ -2,6 +2,37 @@ import numpy as np
 from sudoku_grid import SudokuGrid
 from sudoku_solver import SudokuSolver
 
+def is_valid(seq):
+
+    if len(set(seq+[0])) == 10:
+        return True
+
+    return False
+
+def is_valid_box(grid):
+    
+    return  is_valid(np.reshape(grid,9).tolist())
+
+def validate_solution(grid):
+
+    for i in range(9):
+
+        if not is_valid(grid[i,:].tolist()):
+            return False
+
+        if not is_valid(grid[:,i].tolist()):
+            return False
+
+    for i in range(0, 9, 3):
+        for j in range(0, 9, 3):
+
+            if not is_valid_box(grid[i:i+3, j:j+3]):
+                return False
+
+    return True
+
+
+
 if __name__ == '__main__':
     
     grid = np.asarray([ [ 0, 9, 0, 0, 0, 0, 8, 5, 3 ],
@@ -21,5 +52,9 @@ if __name__ == '__main__':
 
     solver.solve_sudoku(s_grid)
     print (solver)
+    print (validate_solution(solver.final_grid))
+
+
+
 
 
