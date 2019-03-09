@@ -3,14 +3,14 @@ import numpy as np
 
 class SudokuSolver:
 
-    def __init__(self, s_grid):
+    def __init__(self):
 
-        self.final_grid = s_grid
+        self.final_grid = None
 
     def is_used_in_row(self, grid, item, row):
 
         for i in range(9):
-            if item == grid[row,i]:
+            if item == grid.grid[row,i]:
 
                 return True
 
@@ -19,7 +19,7 @@ class SudokuSolver:
     def is_used_in_col(self, grid, item, col):
 
         for i in range(9):
-            if item == grid[i, col]:
+            if item == grid.grid[i, col]:
                 return True
 
         return False
@@ -31,7 +31,7 @@ class SudokuSolver:
 
         for i in range(3):
             for j in range(3):
-                if item == grid[start_row + i, start_col + j]:
+                if item == grid.grid[start_row + i, start_col + j]:
                     return True
 
         return False
@@ -53,14 +53,17 @@ class SudokuSolver:
 
         for i in range(1,10):
             if self.is_safe(grid, i, row, col):
-                grid[row, col] = i
+                grid.grid[row, col] = i
 
                 if self.solve_sudoku(grid):
-                    self.final_grid = grid
+                    self.final_grid = grid.grid
                     return True
 
-                grid[row, col] = BLANK
+                grid.grid[row, col] = BLANK
 
         return False
+
+    def __str__(self):
+        return "Could Not Solve Sudoku!" if self.final_grid is None else "Solution: \n" + str(self.final_grid)
 
 
