@@ -1,7 +1,7 @@
+import threading
 import numpy as np
 from sudoku_grid import SudokuGrid
 from sudoku_solver import SudokuSolver
-from sudoku_visualiser import SudokuVisualiser
 
 def is_valid(seq):
 
@@ -46,23 +46,12 @@ if __name__ == '__main__':
                        [ 7, 0, 0, 0, 0, 6, 0, 0, 0 ],
                        [ 6, 8, 2, 0, 0, 0, 0, 9, 0 ] ])
 
-
     s_grid = SudokuGrid(grid)
 
-    solver = SudokuSolver()
-    vis = SudokuVisualiser(s_grid)
+    solver = SudokuSolver(start_grid = s_grid,visualise = True, visualise_full = False)
+    
+    solver.solve_sudoku()
 
-    solver.solve_sudoku(s_grid)
-    print (solver)
-    print (validate_solution(solver.final_grid))
-
-    vis.update_empty_cells(solver.final_grid)
-
-    vis.run()
-
-
-
-
-
+    print ("\nSolution is Valid" if validate_solution(solver.final_grid) else "\nSolution is not Valid")
 
 

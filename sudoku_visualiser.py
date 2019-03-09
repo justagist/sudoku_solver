@@ -4,7 +4,7 @@ import pygame
 import numpy as np
 from sudoku_grid import SudokuGrid, GRID_FULL, BLANK
 
-_FPS_ = 30
+_FPS_ = 100
 
 # ===== Colours =====
 
@@ -12,6 +12,7 @@ _WHITE_ =    (255,255,255)
 _BLACK_ =    (0,  0,  0)
 _LIGHTGRAY_ = (200, 200, 200)
 _GREEN_     = (34,139,34)
+_RED_   =     (220,20,60)
 
 # ===================
 
@@ -25,11 +26,15 @@ _WINDOWSIZE_ = 90
 
 class SudokuVisualiser:
 
-    def __init__(self, sudoku_grid,size_scale = _SIZE_SCALE_ ):
-        self._sudoku_grid = copy.deepcopy(sudoku_grid)
+    def __init__(self, solver = None,size_scale = _SIZE_SCALE_ , visualise_full_solving = False):
+        self._sudoku_grid = copy.deepcopy(solver._start_grid)
 
         self._set_dimensions(size_scale)
         self._init_viewer()
+
+        self._solver = solver
+        self._visualise_full_solving = visualise_full_solving
+
 
     def _set_dimensions(self, size_scale):
         '''
@@ -49,10 +54,11 @@ class SudokuVisualiser:
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', int(0.8*self.CELLSIZE))
         self.FPSCLOCK = pygame.time.Clock()
         self.DISPLAYSURF = pygame.display.set_mode((self.WINDOWWIDTH, self.WINDOWHEIGHT))
-        self.DISPLAYSURF.fill(_WHITE_)
 
         self._draw_grid()
         self._fill_with_initial_vals()
+
+        self._DISP_COPY = self.DISPLAYSURF.copy()
 
         pygame.display.set_caption('Sudoku Solver')
 
@@ -60,6 +66,7 @@ class SudokuVisualiser:
         '''
             Draw lines for the grid on display surface
         '''
+        self.DISPLAYSURF.fill(_WHITE_)
 
         # ----- Draw Minor Lines
         for x in range(0, self.WINDOWWIDTH, self.CELLSIZE): # draw vertical lines
@@ -77,7 +84,6 @@ class SudokuVisualiser:
 
     def _write_num_at(self, num, position, color = _BLACK_):
 
-        # print (color)
         row, col = position
 
         cellSurf = self.BASICFONT.render('%s' %(num), True, color)
@@ -95,13 +101,12 @@ class SudokuVisualiser:
                 if self._sudoku_grid.grid[row,col] != BLANK:
                     self._write_num_at(self._sudoku_grid.grid[row,col], [row,col])
 
-    def update_empty_cells(self, new_grid):
+    def update_empty_cells(self, new_grid, color = _GREEN_):
 
-        # print (_GREEN_,"YESS")
         for row in range(self._sudoku_grid.grid.shape[0]):
             for col in range(self._sudoku_grid.grid.shape[1]):
-                if self._sudoku_grid.grid[row,col] == BLANK:
-                    self._write_num_at(new_grid[row,col], [row,col], color = _GREEN_)
+                if self._sudoku_grid.grid[row,col] == BLANK and new_grid[row,col] != BLANK:
+                    self._write_num_at(new_grid[row,col], [row,col], color = color)
 
 
     def _main_loop(self):
@@ -109,9 +114,19 @@ class SudokuVisualiser:
             The main method running the pygame loop
         '''
         while True:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                    sys.exit()
+            if self._visualise_full_solving:
+                self._draw_grid()
+                self._fill_with_initial_vals()
+
+                if self._solver is not None and self._solver._temp_grid is not None and self._solver.final_grid is None:
+                    self.update_empty_cells(self._solver._temp_grid, color = _RED_)
+            if self._solver.final_grid is not None:
+                self.update_empty_cells(self._solver.final_grid, color = _GREEN_)
             pygame.display.update()
             self.FPSCLOCK.tick(_FPS_)
 

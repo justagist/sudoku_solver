@@ -1,11 +1,28 @@
-from sudoku_grid import SudokuGrid, BLANK, GRID_FULL
+import time
+import threading
 import numpy as np
+from sudoku_visualiser import SudokuVisualiser
+from sudoku_grid import SudokuGrid, BLANK, GRID_FULL
 
 class SudokuSolver:
 
-    def __init__(self):
+    def __init__(self, start_grid, visualise = False, visualise_full = False):
+
+        self._start_grid = start_grid
 
         self.final_grid = None
+        self._temp_grid = None
+
+        self._visualisation = visualise
+        self._visualise_full = False
+
+        if self._visualisation:
+            self._vis = SudokuVisualiser(solver=self, visualise_full_solving = visualise_full)
+            self._visualise_full = visualise_full
+            self._thread = threading.Thread(target=self._vis.run)
+            self._thread.start()
+            
+
 
     def is_used_in_row(self, grid, item, row):
 
@@ -44,10 +61,20 @@ class SudokuSolver:
 
         return False
 
-    def solve_sudoku(self, grid):
+    def solve_sudoku(self):
+        self._solve_sudoku(self._start_grid)
+        print(self)    
+        self._thread.join()
+
+
+    def _solve_sudoku(self, grid):
 
         if grid.get_unassigned_location() == GRID_FULL:
             return True
+        self._temp_grid = grid.grid
+
+        if self._visualise_full:
+            time.sleep(0.001)
 
         row, col = grid.get_unassigned_location()
 
@@ -55,7 +82,7 @@ class SudokuSolver:
             if self.is_safe(grid, i, row, col):
                 grid.grid[row, col] = i
 
-                if self.solve_sudoku(grid):
+                if self._solve_sudoku(grid):
                     self.final_grid = grid.grid
                     return True
 
@@ -64,6 +91,6 @@ class SudokuSolver:
         return False
 
     def __str__(self):
-        return "Could Not Solve Sudoku!" if self.final_grid is None else "Solution: \n" + str(self.final_grid)
+        return "\nCould Not Solve Sudoku!" if self.final_grid is None else "\nSolution: \n" + str(self.final_grid)
 
 
