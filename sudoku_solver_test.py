@@ -1,6 +1,7 @@
 import numpy as np
 from sudoku_grid import SudokuGrid
 from sudoku_solver import SudokuSolver
+from sudoku_visualiser import SudokuVisualiser
 
 def is_valid(seq):
 
@@ -49,10 +50,17 @@ if __name__ == '__main__':
     s_grid = SudokuGrid(grid)
 
     solver = SudokuSolver()
+    vis = SudokuVisualiser(s_grid)
 
     solver.solve_sudoku(s_grid)
     print (solver)
     print (validate_solution(solver.final_grid))
+
+    vis.update_empty_cells(solver.final_grid)
+
+    vis.run()
+
+
 
 
 
