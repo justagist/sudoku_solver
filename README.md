@@ -1,4 +1,14 @@
+# Sudoku Solver (Python)
 
+Depth-first solution search for a 9x9 Sudoku Grid.
 
-Based on [this article](https://medium.com/@george.seif94/solving-sudoku-using-a-simple-search-algorithm-3ac44857fee8)
+### Requirements
+
+* numpy (`pip install numpy`)
+* pygame (`pip install pygame`)
+
+### Running the solver code
+
+See `sudoku_solver_test.py` file to see usage. By setting `visualise = True` and `visualise_full = True`, the (slower) solution search can be visualised.
+
 

@@ -44,11 +44,9 @@ if __name__ == '__main__':
                        [ 0, 0, 0, 9, 0, 0, 6, 3, 7 ],
                        [ 9, 4, 0, 1, 0, 8, 5, 0, 0 ],
                        [ 7, 0, 0, 0, 0, 6, 0, 0, 0 ],
-                       [ 6, 8, 2, 0, 0, 0, 0, 9, 0 ] ])
+                       [ 6, 8, 2, 0, 0, 0, 0, 0, 1 ] ])
 
-    s_grid = SudokuGrid(grid)
-
-    solver = SudokuSolver(start_grid = s_grid,visualise = True, visualise_full = False)
+    solver = SudokuSolver(start_grid = SudokuGrid(grid),visualise = True, visualise_full = False)
     
     solver.solve_sudoku()
 

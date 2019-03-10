@@ -2,7 +2,7 @@ import sys
 import copy
 import pygame
 import numpy as np
-from sudoku_grid import SudokuGrid, GRID_FULL, BLANK
+from sudoku_grid import BLANK
 
 _FPS_ = 100
 
@@ -27,6 +27,14 @@ _WINDOWSIZE_ = 90
 class SudokuVisualiser:
 
     def __init__(self, solver = None,size_scale = _SIZE_SCALE_ , visualise_full_solving = False):
+        '''
+            Create a visualiser instance for the SudokuSolver
+            @Args:
+                solver (SudokuSolver) : The solver instance to be used
+                size_scale (int)      : The scale for the visualiser window size
+                visualise_full_solving: Set to True to see the solving process (slower)
+                
+        '''
         self._sudoku_grid = copy.deepcopy(solver._start_grid)
 
         self._set_dimensions(size_scale)
@@ -83,7 +91,9 @@ class SudokuVisualiser:
             pygame.draw.line(self.DISPLAYSURF, _BLACK_, (0,y), (self.WINDOWWIDTH, y))
 
     def _write_num_at(self, num, position, color = _BLACK_):
-
+        '''
+            Write the number at the (row,col) given in the position argument    
+        '''
         row, col = position
 
         cellSurf = self.BASICFONT.render('%s' %(num), True, color)
@@ -95,14 +105,18 @@ class SudokuVisualiser:
         
 
     def _fill_with_initial_vals(self):
-
+        '''
+            Fill the grid with the numbers given in the initial grid (in Black)
+        '''
         for row in range(self._sudoku_grid.grid.shape[0]):
             for col in range(self._sudoku_grid.grid.shape[1]):
                 if self._sudoku_grid.grid[row,col] != BLANK:
                     self._write_num_at(self._sudoku_grid.grid[row,col], [row,col])
 
     def update_empty_cells(self, new_grid, color = _GREEN_):
-
+        '''
+            Empty cells are written with numbers from `new_grid' 
+        '''
         for row in range(self._sudoku_grid.grid.shape[0]):
             for col in range(self._sudoku_grid.grid.shape[1]):
                 if self._sudoku_grid.grid[row,col] == BLANK and new_grid[row,col] != BLANK:
@@ -117,8 +131,7 @@ class SudokuVisualiser:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.stop_visaliser()
             if self._visualise_full_solving:
                 self._draw_grid()
                 self._fill_with_initial_vals()
@@ -132,26 +145,9 @@ class SudokuVisualiser:
 
     def stop_visaliser(self):
         pygame.quit()
+        sys.exit()
 
     def run(self):
         self._main_loop()
 
 
-
-if __name__ == '__main__':
-
-    grid = np.asarray([ [ 0, 9, 0, 0, 0, 0, 8, 5, 3 ],
-                       [ 0, 0, 0, 8, 0, 0, 0, 0, 4 ],
-                       [ 0, 0, 8, 2, 0, 3, 0, 6, 9 ],
-                       [ 5, 7, 4, 0, 0, 2, 0, 0, 0 ],
-                       [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-                       [ 0, 0, 0, 9, 0, 0, 6, 3, 7 ],
-                       [ 9, 4, 0, 1, 0, 8, 5, 0, 0 ],
-                       [ 7, 0, 0, 0, 0, 6, 0, 0, 0 ],
-                       [ 6, 8, 2, 0, 0, 0, 0, 9, 0 ] ])
-
-
-    s_grid = SudokuGrid(grid)
-    
-    sv = SudokuVisualiser(s_grid)
-    sv.run()
