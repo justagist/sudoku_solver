@@ -11,4 +11,6 @@ Depth-first solution search for a 9x9 Sudoku Grid.
 
 See `sudoku_solver_test.py` file to see usage. By setting `visualise = True` and `visualise_full = True`, the (slower) solution search can be visualised.
 
+### Sample
 
+![Sudoku Solver](solver.gif)
